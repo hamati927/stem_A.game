@@ -1,0 +1,10 @@
+Sweep complete. Results:
+{'angle_threshold': 8, 'total_ref': 20, 'Perfect': 5, 'Great': 3, 'Good': 4, 'Miss': 8, 'avg_dt_matched': 2.7651297595563435}
+{'angle_threshold': 10, 'total_ref': 20, 'Perfect': 5, 'Great': 4, 'Good': 4, 'Miss': 7, 'avg_dt_matched': 2.629351258018782}
+{'angle_threshold': 12, 'total_ref': 20, 'Perfect': 5, 'Great': 4, 'Good': 5, 'Miss': 6, 'avg_dt_matched': 2.8675416501493176}
+{'angle_threshold': 15, 'total_ref': 20, 'Perfect': 5, 'Great': 4, 'Good': 5, 'Miss': 6, 'avg_dt_matched': 2.8675416501493176}
+{'angle_threshold': 18, 'total_ref': 20, 'Perfect': 5, 'Great': 4, 'Good': 5, 'Miss': 6, 'avg_dt_matched': 2.8675416501493176}
+{'angle_threshold': 20, 'total_ref': 20, 'Perfect': 5, 'Great': 4, 'Good': 5, 'Miss': 6, 'avg_dt_matched': 2.8675416501493176}
+{'angle_threshold': 25, 'total_ref': 20, 'Perfect': 8, 'Great': 4, 'Good': 3, 'Miss': 5, 'avg_dt_matched': 1.9990577641920582}
+
+詳細は logs/results.csv と logs/details.json を参照してください。

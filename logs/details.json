@@ -1,0 +1,1136 @@
+{
+  "8": [
+    {
+      "t_ref": 0.0,
+      "matched": true,
+      "t_user": 0.3528556830203151,
+      "dt": 0.3528556830203151,
+      "angle_diff": 3.605436731884758,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 3.1578947368421053,
+      "matched": true,
+      "t_user": 3.0582367989848778,
+      "dt": -0.09965793785722754,
+      "angle_diff": 1.5337877224008452,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 6.315789473684211,
+      "matched": true,
+      "t_user": 6.770667101499058,
+      "dt": 0.454877627814847,
+      "angle_diff": 1.007689027993763,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 9.473684210526315,
+      "matched": true,
+      "t_user": 10.191012002363342,
+      "dt": 0.7173277918370271,
+      "angle_diff": 1.1323344170058647,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 12.631578947368421,
+      "matched": true,
+      "t_user": 13.308791981977327,
+      "dt": 0.677213034608906,
+      "angle_diff": 1.8067085696431846,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 15.789473684210527,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 18.94736842105263,
+      "matched": true,
+      "t_user": 22.513707648470977,
+      "dt": 3.5663392274183465,
+      "angle_diff": 0.8908852172410491,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 22.105263157894736,
+      "matched": true,
+      "t_user": 26.267119416603396,
+      "dt": 4.16185625870866,
+      "angle_diff": 4.152390797368945,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 25.263157894736842,
+      "matched": true,
+      "t_user": 31.114116020372464,
+      "dt": 5.850958125635621,
+      "angle_diff": 1.5540605430911683,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 28.42105263157895,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 31.578947368421055,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 34.73684210526316,
+      "matched": true,
+      "t_user": 38.5974816706261,
+      "dt": 3.860639565362945,
+      "angle_diff": 0.5338082073833661,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 37.89473684210526,
+      "matched": true,
+      "t_user": 41.81799744362996,
+      "dt": 3.923260601524703,
+      "angle_diff": 3.415363104991215,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 41.05263157894737,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 44.21052631578947,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 47.36842105263158,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 50.526315789473685,
+      "matched": true,
+      "t_user": 54.72547367586057,
+      "dt": 4.199157886386885,
+      "angle_diff": 2.807303462951303,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 53.68421052631579,
+      "matched": true,
+      "t_user": 59.20093977653088,
+      "dt": 5.516729250215093,
+      "angle_diff": 0.9111720679042818,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 56.8421052631579,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 60.0,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    }
+  ],
+  "10": [
+    {
+      "t_ref": 0.0,
+      "matched": true,
+      "t_user": 0.3528556830203151,
+      "dt": 0.3528556830203151,
+      "angle_diff": 3.605436731884758,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 3.1578947368421053,
+      "matched": true,
+      "t_user": 3.0582367989848778,
+      "dt": -0.09965793785722754,
+      "angle_diff": 1.5337877224008452,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 6.315789473684211,
+      "matched": true,
+      "t_user": 6.770667101499058,
+      "dt": 0.454877627814847,
+      "angle_diff": 1.007689027993763,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 9.473684210526315,
+      "matched": true,
+      "t_user": 10.191012002363342,
+      "dt": 0.7173277918370271,
+      "angle_diff": 1.1323344170058647,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 12.631578947368421,
+      "matched": true,
+      "t_user": 13.308791981977327,
+      "dt": 0.677213034608906,
+      "angle_diff": 1.8067085696431846,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 15.789473684210527,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 18.94736842105263,
+      "matched": true,
+      "t_user": 22.513707648470977,
+      "dt": 3.5663392274183465,
+      "angle_diff": 0.8908852172410491,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 22.105263157894736,
+      "matched": true,
+      "t_user": 26.267119416603396,
+      "dt": 4.16185625870866,
+      "angle_diff": 4.152390797368945,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 25.263157894736842,
+      "matched": true,
+      "t_user": 31.114116020372464,
+      "dt": 5.850958125635621,
+      "angle_diff": 1.5540605430911683,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 28.42105263157895,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 31.578947368421055,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 34.73684210526316,
+      "matched": true,
+      "t_user": 38.5974816706261,
+      "dt": 3.860639565362945,
+      "angle_diff": 0.5338082073833661,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 37.89473684210526,
+      "matched": true,
+      "t_user": 41.81799744362996,
+      "dt": 3.923260601524703,
+      "angle_diff": 3.415363104991215,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 41.05263157894737,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 44.21052631578947,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 47.36842105263158,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 50.526315789473685,
+      "matched": true,
+      "t_user": 54.72547367586057,
+      "dt": 4.199157886386885,
+      "angle_diff": 2.807303462951303,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 53.68421052631579,
+      "matched": true,
+      "t_user": 57.84211450272595,
+      "dt": 4.157903976410161,
+      "angle_diff": 9.426887499035537,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 56.8421052631579,
+      "matched": true,
+      "t_user": 59.20093977653088,
+      "dt": 2.358834513372983,
+      "angle_diff": 1.2081175426507471,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 60.0,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    }
+  ],
+  "12": [
+    {
+      "t_ref": 0.0,
+      "matched": true,
+      "t_user": 0.3528556830203151,
+      "dt": 0.3528556830203151,
+      "angle_diff": 3.605436731884758,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 3.1578947368421053,
+      "matched": true,
+      "t_user": 3.0582367989848778,
+      "dt": -0.09965793785722754,
+      "angle_diff": 1.5337877224008452,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 6.315789473684211,
+      "matched": true,
+      "t_user": 6.770667101499058,
+      "dt": 0.454877627814847,
+      "angle_diff": 1.007689027993763,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 9.473684210526315,
+      "matched": true,
+      "t_user": 10.191012002363342,
+      "dt": 0.7173277918370271,
+      "angle_diff": 1.1323344170058647,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 12.631578947368421,
+      "matched": true,
+      "t_user": 13.308791981977327,
+      "dt": 0.677213034608906,
+      "angle_diff": 1.8067085696431846,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 15.789473684210527,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 18.94736842105263,
+      "matched": true,
+      "t_user": 22.513707648470977,
+      "dt": 3.5663392274183465,
+      "angle_diff": 0.8908852172410491,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 22.105263157894736,
+      "matched": true,
+      "t_user": 26.267119416603396,
+      "dt": 4.16185625870866,
+      "angle_diff": 4.152390797368945,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 25.263157894736842,
+      "matched": true,
+      "t_user": 31.114116020372464,
+      "dt": 5.850958125635621,
+      "angle_diff": 1.5540605430911683,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 28.42105263157895,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 31.578947368421055,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 34.73684210526316,
+      "matched": true,
+      "t_user": 38.5974816706261,
+      "dt": 3.860639565362945,
+      "angle_diff": 0.5338082073833661,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 37.89473684210526,
+      "matched": true,
+      "t_user": 41.81799744362996,
+      "dt": 3.923260601524703,
+      "angle_diff": 3.415363104991215,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 41.05263157894737,
+      "matched": true,
+      "t_user": 47.01664832679364,
+      "dt": 5.964016747846273,
+      "angle_diff": 10.914894880951785,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 44.21052631578947,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 47.36842105263158,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 50.526315789473685,
+      "matched": true,
+      "t_user": 54.72547367586057,
+      "dt": 4.199157886386885,
+      "angle_diff": 2.807303462951303,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 53.68421052631579,
+      "matched": true,
+      "t_user": 57.84211450272595,
+      "dt": 4.157903976410161,
+      "angle_diff": 9.426887499035537,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 56.8421052631579,
+      "matched": true,
+      "t_user": 59.20093977653088,
+      "dt": 2.358834513372983,
+      "angle_diff": 1.2081175426507471,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 60.0,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    }
+  ],
+  "15": [
+    {
+      "t_ref": 0.0,
+      "matched": true,
+      "t_user": 0.3528556830203151,
+      "dt": 0.3528556830203151,
+      "angle_diff": 3.605436731884758,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 3.1578947368421053,
+      "matched": true,
+      "t_user": 3.0582367989848778,
+      "dt": -0.09965793785722754,
+      "angle_diff": 1.5337877224008452,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 6.315789473684211,
+      "matched": true,
+      "t_user": 6.770667101499058,
+      "dt": 0.454877627814847,
+      "angle_diff": 1.007689027993763,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 9.473684210526315,
+      "matched": true,
+      "t_user": 10.191012002363342,
+      "dt": 0.7173277918370271,
+      "angle_diff": 1.1323344170058647,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 12.631578947368421,
+      "matched": true,
+      "t_user": 13.308791981977327,
+      "dt": 0.677213034608906,
+      "angle_diff": 1.8067085696431846,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 15.789473684210527,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 18.94736842105263,
+      "matched": true,
+      "t_user": 22.513707648470977,
+      "dt": 3.5663392274183465,
+      "angle_diff": 0.8908852172410491,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 22.105263157894736,
+      "matched": true,
+      "t_user": 26.267119416603396,
+      "dt": 4.16185625870866,
+      "angle_diff": 4.152390797368945,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 25.263157894736842,
+      "matched": true,
+      "t_user": 31.114116020372464,
+      "dt": 5.850958125635621,
+      "angle_diff": 1.5540605430911683,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 28.42105263157895,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 31.578947368421055,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 34.73684210526316,
+      "matched": true,
+      "t_user": 38.5974816706261,
+      "dt": 3.860639565362945,
+      "angle_diff": 0.5338082073833661,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 37.89473684210526,
+      "matched": true,
+      "t_user": 41.81799744362996,
+      "dt": 3.923260601524703,
+      "angle_diff": 3.415363104991215,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 41.05263157894737,
+      "matched": true,
+      "t_user": 47.01664832679364,
+      "dt": 5.964016747846273,
+      "angle_diff": 10.914894880951785,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 44.21052631578947,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 47.36842105263158,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 50.526315789473685,
+      "matched": true,
+      "t_user": 54.72547367586057,
+      "dt": 4.199157886386885,
+      "angle_diff": 2.807303462951303,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 53.68421052631579,
+      "matched": true,
+      "t_user": 57.84211450272595,
+      "dt": 4.157903976410161,
+      "angle_diff": 9.426887499035537,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 56.8421052631579,
+      "matched": true,
+      "t_user": 59.20093977653088,
+      "dt": 2.358834513372983,
+      "angle_diff": 1.2081175426507471,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 60.0,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    }
+  ],
+  "18": [
+    {
+      "t_ref": 0.0,
+      "matched": true,
+      "t_user": 0.3528556830203151,
+      "dt": 0.3528556830203151,
+      "angle_diff": 3.605436731884758,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 3.1578947368421053,
+      "matched": true,
+      "t_user": 3.0582367989848778,
+      "dt": -0.09965793785722754,
+      "angle_diff": 1.5337877224008452,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 6.315789473684211,
+      "matched": true,
+      "t_user": 6.770667101499058,
+      "dt": 0.454877627814847,
+      "angle_diff": 1.007689027993763,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 9.473684210526315,
+      "matched": true,
+      "t_user": 10.191012002363342,
+      "dt": 0.7173277918370271,
+      "angle_diff": 1.1323344170058647,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 12.631578947368421,
+      "matched": true,
+      "t_user": 13.308791981977327,
+      "dt": 0.677213034608906,
+      "angle_diff": 1.8067085696431846,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 15.789473684210527,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 18.94736842105263,
+      "matched": true,
+      "t_user": 22.513707648470977,
+      "dt": 3.5663392274183465,
+      "angle_diff": 0.8908852172410491,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 22.105263157894736,
+      "matched": true,
+      "t_user": 26.267119416603396,
+      "dt": 4.16185625870866,
+      "angle_diff": 4.152390797368945,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 25.263157894736842,
+      "matched": true,
+      "t_user": 31.114116020372464,
+      "dt": 5.850958125635621,
+      "angle_diff": 1.5540605430911683,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 28.42105263157895,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 31.578947368421055,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 34.73684210526316,
+      "matched": true,
+      "t_user": 38.5974816706261,
+      "dt": 3.860639565362945,
+      "angle_diff": 0.5338082073833661,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 37.89473684210526,
+      "matched": true,
+      "t_user": 41.81799744362996,
+      "dt": 3.923260601524703,
+      "angle_diff": 3.415363104991215,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 41.05263157894737,
+      "matched": true,
+      "t_user": 47.01664832679364,
+      "dt": 5.964016747846273,
+      "angle_diff": 10.914894880951785,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 44.21052631578947,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 47.36842105263158,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 50.526315789473685,
+      "matched": true,
+      "t_user": 54.72547367586057,
+      "dt": 4.199157886386885,
+      "angle_diff": 2.807303462951303,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 53.68421052631579,
+      "matched": true,
+      "t_user": 57.84211450272595,
+      "dt": 4.157903976410161,
+      "angle_diff": 9.426887499035537,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 56.8421052631579,
+      "matched": true,
+      "t_user": 59.20093977653088,
+      "dt": 2.358834513372983,
+      "angle_diff": 1.2081175426507471,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 60.0,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    }
+  ],
+  "20": [
+    {
+      "t_ref": 0.0,
+      "matched": true,
+      "t_user": 0.3528556830203151,
+      "dt": 0.3528556830203151,
+      "angle_diff": 3.605436731884758,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 3.1578947368421053,
+      "matched": true,
+      "t_user": 3.0582367989848778,
+      "dt": -0.09965793785722754,
+      "angle_diff": 1.5337877224008452,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 6.315789473684211,
+      "matched": true,
+      "t_user": 6.770667101499058,
+      "dt": 0.454877627814847,
+      "angle_diff": 1.007689027993763,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 9.473684210526315,
+      "matched": true,
+      "t_user": 10.191012002363342,
+      "dt": 0.7173277918370271,
+      "angle_diff": 1.1323344170058647,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 12.631578947368421,
+      "matched": true,
+      "t_user": 13.308791981977327,
+      "dt": 0.677213034608906,
+      "angle_diff": 1.8067085696431846,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 15.789473684210527,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 18.94736842105263,
+      "matched": true,
+      "t_user": 22.513707648470977,
+      "dt": 3.5663392274183465,
+      "angle_diff": 0.8908852172410491,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 22.105263157894736,
+      "matched": true,
+      "t_user": 26.267119416603396,
+      "dt": 4.16185625870866,
+      "angle_diff": 4.152390797368945,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 25.263157894736842,
+      "matched": true,
+      "t_user": 31.114116020372464,
+      "dt": 5.850958125635621,
+      "angle_diff": 1.5540605430911683,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 28.42105263157895,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 31.578947368421055,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 34.73684210526316,
+      "matched": true,
+      "t_user": 38.5974816706261,
+      "dt": 3.860639565362945,
+      "angle_diff": 0.5338082073833661,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 37.89473684210526,
+      "matched": true,
+      "t_user": 41.81799744362996,
+      "dt": 3.923260601524703,
+      "angle_diff": 3.415363104991215,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 41.05263157894737,
+      "matched": true,
+      "t_user": 47.01664832679364,
+      "dt": 5.964016747846273,
+      "angle_diff": 10.914894880951785,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 44.21052631578947,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 47.36842105263158,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 50.526315789473685,
+      "matched": true,
+      "t_user": 54.72547367586057,
+      "dt": 4.199157886386885,
+      "angle_diff": 2.807303462951303,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 53.68421052631579,
+      "matched": true,
+      "t_user": 57.84211450272595,
+      "dt": 4.157903976410161,
+      "angle_diff": 9.426887499035537,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 56.8421052631579,
+      "matched": true,
+      "t_user": 59.20093977653088,
+      "dt": 2.358834513372983,
+      "angle_diff": 1.2081175426507471,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 60.0,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    }
+  ],
+  "25": [
+    {
+      "t_ref": 0.0,
+      "matched": true,
+      "t_user": 0.3528556830203151,
+      "dt": 0.3528556830203151,
+      "angle_diff": 3.605436731884758,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 3.1578947368421053,
+      "matched": true,
+      "t_user": 3.0582367989848778,
+      "dt": -0.09965793785722754,
+      "angle_diff": 1.5337877224008452,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 6.315789473684211,
+      "matched": true,
+      "t_user": 6.770667101499058,
+      "dt": 0.454877627814847,
+      "angle_diff": 1.007689027993763,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 9.473684210526315,
+      "matched": true,
+      "t_user": 10.191012002363342,
+      "dt": 0.7173277918370271,
+      "angle_diff": 1.1323344170058647,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 12.631578947368421,
+      "matched": true,
+      "t_user": 13.308791981977327,
+      "dt": 0.677213034608906,
+      "angle_diff": 1.8067085696431846,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 15.789473684210527,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 18.94736842105263,
+      "matched": true,
+      "t_user": 18.261335992369375,
+      "dt": -0.6860324286832551,
+      "angle_diff": 24.00549231588523,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 22.105263157894736,
+      "matched": true,
+      "t_user": 22.513707648470977,
+      "dt": 0.4084444905762403,
+      "angle_diff": 1.3113760080963104,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 25.263157894736842,
+      "matched": true,
+      "t_user": 26.267119416603396,
+      "dt": 1.0039615218665539,
+      "angle_diff": 2.0129817132822225,
+      "judgment": "Perfect"
+    },
+    {
+      "t_ref": 28.42105263157895,
+      "matched": true,
+      "t_user": 31.114116020372464,
+      "dt": 2.693063388793515,
+      "angle_diff": 1.4239401778294223,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 31.578947368421055,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 34.73684210526316,
+      "matched": true,
+      "t_user": 38.5974816706261,
+      "dt": 3.860639565362945,
+      "angle_diff": 0.5338082073833661,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 37.89473684210526,
+      "matched": true,
+      "t_user": 41.81799744362996,
+      "dt": 3.923260601524703,
+      "angle_diff": 3.415363104991215,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 41.05263157894737,
+      "matched": true,
+      "t_user": 47.01664832679364,
+      "dt": 5.964016747846273,
+      "angle_diff": 10.914894880951785,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 44.21052631578947,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 47.36842105263158,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    },
+    {
+      "t_ref": 50.526315789473685,
+      "matched": true,
+      "t_user": 54.72547367586057,
+      "dt": 4.199157886386885,
+      "angle_diff": 2.807303462951303,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 53.68421052631579,
+      "matched": true,
+      "t_user": 57.84211450272595,
+      "dt": 4.157903976410161,
+      "angle_diff": 9.426887499035537,
+      "judgment": "Good"
+    },
+    {
+      "t_ref": 56.8421052631579,
+      "matched": true,
+      "t_user": 59.20093977653088,
+      "dt": 2.358834513372983,
+      "angle_diff": 1.2081175426507471,
+      "judgment": "Great"
+    },
+    {
+      "t_ref": 60.0,
+      "matched": false,
+      "t_user": null,
+      "dt": null,
+      "angle_diff": null,
+      "judgment": "Miss"
+    }
+  ]
+}
