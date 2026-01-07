@@ -9,8 +9,22 @@ VENV="$ROOT_DIR/.venv"
 
 # Check tmux
 if ! command -v tmux >/dev/null 2>&1; then
-  echo "Error: 'tmux' is required but not found. Install tmux and re-run this script." >&2
-  exit 1
+  echo "Warning: 'tmux' not found. Falling back to launching background processes and writing logs in ./logs." >&2
+
+  # Start background processes as a fallback (use nohup to detach)
+  nohup bash -lc "cd '$ROOT_DIR' && source '$VENV/bin/activate' && python3 game.py --source 0" > logs/game.log 2>&1 &
+  nohup bash -lc "cd '$ROOT_DIR' && source '$VENV/bin/activate' && python3 threshold_optimizer.py" > logs/threshold_optimizer.log 2>&1 &
+  nohup bash -lc "cd '$ROOT_DIR' && source '$VENV/bin/activate' && python3 pose_judge_sim.py" > logs/pose_judge_sim.log 2>&1 &
+  nohup bash -lc "cd '$ROOT_DIR' && source '$VENV/bin/activate' && python3 generate_default_config.py" > logs/generate_default_config.log 2>&1 &
+
+  if command -v flutter >/dev/null 2>&1; then
+    (cd "$ROOT_DIR/flutter_application_1" && flutter run -d linux > logs/flutter.log 2>&1 &) || true
+  else
+    echo "Warning: flutter not found; skipping flutter run" >&2
+  fi
+
+  echo "Started background processes. Check the logs/ directory for outputs." 
+  exit 0
 fi
 
 # Create session
@@ -61,3 +75,4 @@ echo " - window 'flutter': flutter run (desktop)"
 echo "Attach with: tmux attach -t $SESSION_NAME"
 
 echo "If you need to stop everything, attach to the session and send Ctrl-C in each pane, or kill the session: tmux kill-session -t $SESSION_NAME"
+ 

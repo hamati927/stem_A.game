@@ -28,6 +28,16 @@ pip install numpy matplotlib
 mkdir -p "$ROOT_DIR/logs"
 mkdir -p "$ROOT_DIR/configs"
 
+# Check tmux and suggest install
+if ! command -v tmux >/dev/null 2>&1; then
+  if [ "$(id -u)" -eq 0 ]; then
+    echo "tmux not found; attempting to install via apt..."
+    apt-get update && apt-get install -y tmux || echo "Failed to install tmux; please install manually."
+  else
+    echo "Warning: 'tmux' not found. Install with: sudo apt install tmux"
+  fi
+fi
+
 # Report flutter availability
 if command -v flutter >/dev/null 2>&1; then
   echo "Flutter found: $(flutter --version | head -n 1)"
