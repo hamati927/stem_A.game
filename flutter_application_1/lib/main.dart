@@ -77,6 +77,22 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
   // 画像回転（カメラのセンサー向き）
   InputImageRotation? _imageRotation;
 
+  // 動作検出
+  int _squatCount = 0;
+  int _stepLeftCount = 0;
+  int _stepRightCount = 0;
+  String _lastDetected = '';
+  DateTime? _lastDetectionTime;
+  
+  // 検出閾値
+  final double _squatThreshold = 0.15;
+  final double _stepHeightThreshold = 0.08;
+  
+  // 前回の状態（連続検出防止）
+  bool _wasSquatting = false;
+  bool _wasSteppingLeft = false;
+  bool _wasSteppingRight = false;
+
   @override
   void initState() {
     super.initState();
@@ -140,6 +156,7 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
       if (mounted) {
         setState(() {
           _currentPose = poses.isNotEmpty ? poses.first : null;
+          _detectMotions();
         });
       }
     } catch (e) {
@@ -147,6 +164,61 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
     }
 
     _isDetecting = false;
+  }
+  
+  void _detectMotions() {
+    if (_currentPose == null) return;
+    
+    final landmarks = _currentPose!.landmarks;
+    
+    // スクワット検出
+    final leftHip = landmarks[PoseLandmarkType.leftHip];
+    final leftKnee = landmarks[PoseLandmarkType.leftKnee];
+    
+    if (leftHip != null && leftKnee != null && leftHip.y > 0) {
+      final ratio = (leftHip.y - leftKnee.y).abs() / leftHip.y;
+      final isSquatting = ratio < _squatThreshold;
+      
+      if (isSquatting && !_wasSquatting) {
+        _squatCount++;
+        _lastDetected = 'スクワット';
+        _lastDetectionTime = DateTime.now();
+        debugPrint('スクワット検出！ カウント: $_squatCount');
+      }
+      _wasSquatting = isSquatting;
+    }
+    
+    // 左足踏み検出
+    final leftAnkle = landmarks[PoseLandmarkType.leftAnkle];
+    final leftKneeForStep = landmarks[PoseLandmarkType.leftKnee];
+    
+    if (leftAnkle != null && leftKneeForStep != null) {
+      final isSteppingLeft = leftAnkle.y < (leftKneeForStep.y - _stepHeightThreshold);
+      
+      if (isSteppingLeft && !_wasSteppingLeft) {
+        _stepLeftCount++;
+        _lastDetected = '左足踏み';
+        _lastDetectionTime = DateTime.now();
+        debugPrint('左足踏み検出！ カウント: $_stepLeftCount');
+      }
+      _wasSteppingLeft = isSteppingLeft;
+    }
+    
+    // 右足踏み検出
+    final rightAnkle = landmarks[PoseLandmarkType.rightAnkle];
+    final rightKnee = landmarks[PoseLandmarkType.rightKnee];
+    
+    if (rightAnkle != null && rightKnee != null) {
+      final isSteppingRight = rightAnkle.y < (rightKnee.y - _stepHeightThreshold);
+      
+      if (isSteppingRight && !_wasSteppingRight) {
+        _stepRightCount++;
+        _lastDetected = '右足踏み';
+        _lastDetectionTime = DateTime.now();
+        debugPrint('右足踏み検出！ カウント: $_stepRightCount');
+      }
+      _wasSteppingRight = isSteppingRight;
+    }
   }
 
   InputImage _convertCameraImage(CameraImage image) {
@@ -195,7 +267,21 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('全身骨格トラッカー'),
+        title: const Text('動作検出トラッカー'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                _squatCount = 0;
+                _stepLeftCount = 0;
+                _stepRightCount = 0;
+                _lastDetected = '';
+                _lastDetectionTime = null;
+              });
+            },
+          ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -221,6 +307,84 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
                   child: const Text(
                     'No pose detected...（カメラ位置・照明を調整してください）',
                     style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ),
+              ),
+            ),
+          // 検出カウント表示
+          Positioned(
+            top: 16,
+            left: 16,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.black87,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'スクワット: $_squatCount',
+                    style: const TextStyle(
+                      color: Colors.cyan,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '左足踏み: $_stepLeftCount',
+                    style: const TextStyle(
+                      color: Colors.pink,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '右足踏み: $_stepRightCount',
+                    style: const TextStyle(
+                      color: Colors.yellow,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // 最新の検出表示
+          if (_lastDetected.isNotEmpty && _lastDetectionTime != null)
+            Positioned(
+              bottom: 100,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: AnimatedOpacity(
+                  opacity: DateTime.now().difference(_lastDetectionTime!).inMilliseconds < 1000 ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 500),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      '$_lastDetected 検出！',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ),
