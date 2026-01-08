@@ -535,8 +535,8 @@ class GameOverlayPainter extends CustomPainter {
         _drawStickFigure(canvas, baseX, baseY, scale, paint, fillPaint, squatting: true);
         break;
       case ActionType.stepLeft:
-        paint.color = Colors.magenta;
-        fillPaint.color = Colors.magenta;
+        paint.color = Colors.pink;
+        fillPaint.color = Colors.pink;
         // 左足を上げた状態
         _drawStickFigure(canvas, baseX, baseY, scale, paint, fillPaint, leftLegUp: true);
         break;
