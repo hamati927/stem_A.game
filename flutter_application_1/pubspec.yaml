@@ -12,7 +12,7 @@ dependencies:
   camera: ^0.10.8+1
   google_mlkit_pose_detection: ^0.4.0
   image: ^4.0.17
-  permission_handler: ^11.4.4
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
