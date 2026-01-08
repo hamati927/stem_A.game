@@ -86,6 +86,9 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
   double _squatThreshold = 0.15;
   double _stepHeightThreshold = 0.08;
   
+  // 画像回転（カメラのセンサー向き）
+  InputImageRotation? _imageRotation;
+  
   // デバッグモード
   bool _debugMode = false;
   String _debugInfo = '';
@@ -159,13 +162,37 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
       camera,
       ResolutionPreset.medium,
       enableAudio: false,
+      imageFormatGroup: ImageFormatGroup.yuv420,
     );
 
     await _cameraController!.initialize();
     _cameraController!.startImageStream(_processCameraImage);
 
+    // カメラのセンサー向きから回転を設定
+    try {
+      final degrees = _cameraController!.description.sensorOrientation;
+      _imageRotation = _rotationFromDegrees(degrees);
+    } catch (_) {
+      _imageRotation = InputImageRotation.rotation0deg;
+    }
+
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  InputImageRotation _rotationFromDegrees(int degrees) {
+    switch (degrees) {
+      case 0:
+        return InputImageRotation.rotation0deg;
+      case 90:
+        return InputImageRotation.rotation90deg;
+      case 180:
+        return InputImageRotation.rotation180deg;
+      case 270:
+        return InputImageRotation.rotation270deg;
+      default:
+        return InputImageRotation.rotation0deg;
     }
   }
 
@@ -328,7 +355,7 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
       image.height.toDouble(),
     );
 
-    final InputImageRotation rotation = InputImageRotation.rotation0deg;
+    final InputImageRotation rotation = _imageRotation ?? InputImageRotation.rotation0deg;
     final InputImageFormat format = InputImageFormat.nv21;
 
     final inputImageMetadata = InputImageMetadata(
@@ -409,6 +436,25 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
               debugMode: _debugMode,
             ),
           ),
+          if (_currentPose == null)
+            Positioned(
+              top: 56,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'No pose detected...（カメラ位置・照明を調整してください）',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ),
+              ),
+            ),
           // デバッグ情報パネル
           if (_debugMode)
             Positioned(
