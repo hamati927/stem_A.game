@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'dart:typed_data';
 
 void main() async {
@@ -84,6 +85,10 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
   // 検出閾値
   final double _squatThreshold = 0.15;
   final double _stepHeightThreshold = 0.08;
+  
+  // 音声プレイヤー
+  late AudioPlayer _bgmPlayer;
+  late AudioPlayer _successPlayer;
 
   @override
   void initState() {
@@ -92,7 +97,13 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
     _poseDetector = PoseDetector(
       options: PoseDetectorOptions(),
     );
+    _initializeAudio();
     _initializeGame();
+  }
+  
+  void _initializeAudio() {
+    _bgmPlayer = AudioPlayer();
+    _successPlayer = AudioPlayer();
   }
   
   void _initializeGame() {
@@ -109,6 +120,26 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
     _gameStartTime = DateTime.now();
     _score = 0;
     _gameFinished = false;
+    
+    // BGM再生開始
+    _playBgm();
+  }
+  
+  Future<void> _playBgm() async {
+    try {
+      await _bgmPlayer.play(AssetSource('audio/bgm.wav'), volume: 0.5);
+      await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
+    } catch (e) {
+      debugPrint('Failed to load BGM: $e');
+    }
+  }
+  
+  Future<void> _playSuccessSound() async {
+    try {
+      await _successPlayer.play(AssetSource('audio/success.wav'), volume: 0.7);
+    } catch (e) {
+      debugPrint('Failed to play success sound: $e');
+    }
   }
 
   Future<void> _initializeCamera() async {
@@ -195,6 +226,7 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
         currentAction.completed = true;
         _score++;
         _showSuccess = true;
+        _playSuccessSound();
         debugPrint('成功: ${currentAction.displayName}');
         
         // 成功表示を1秒後に消す
@@ -283,6 +315,8 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
   void dispose() {
     _cameraController?.dispose();
     _poseDetector?.close();
+    _bgmPlayer.release();
+    _successPlayer.release();
     super.dispose();
   }
 
@@ -315,6 +349,7 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
+              _bgmPlayer.stop();
               setState(() {
                 _initializeGame();
               });
