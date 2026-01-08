@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'dart:typed_data';
 
 void main() {
   runApp(const MyApp());
@@ -63,10 +64,7 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
   }
 
   void _initializePoseDetector() {
-    final options = PoseDetectorOptions(
-      poseDetectionModel: PoseDetectionModel.accurate,
-      enableSegmentation: false,
-    );
+    final options = PoseDetectorOptions();
     _poseDetector = PoseDetector(options: options);
   }
 
@@ -86,22 +84,37 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
   }
 
   InputImage _convertCameraImage(CameraImage image) {
-    final WriteBuffer allBytes = WriteBuffer();
-    for (Plane plane in image.planes) {
-      allBytes.putUint8List(plane.bytes);
-    }
-    final bytes = allBytes.done().buffer.asUint8List();
-    final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
-
-    return InputImage.fromBytes(
-      bytes: bytes,
-      metadata: InputImageMetadata(
-        size: imageSize,
-        rotation: InputImageRotation.rotation0deg,
-        format: InputImageFormat.nv21,
-        bytesPerRow: image.planes[0].bytesPerRow,
+    final bytes = Uint8List.fromList(
+      image.planes.fold<List<int>>(
+        [],
+        (List<int> previousValue, element) => previousValue..addAll(element.bytes),
       ),
     );
+
+    final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
+
+    final InputImageRotation imageRotation = InputImageRotation.rotation0deg;
+
+    final InputImageFormat inputImageFormat = InputImageFormat.nv21;
+
+    final planeData = image.planes.map(
+      (Plane plane) {
+        return InputImagePlaneMetadata(
+          bytesPerRow: plane.bytesPerRow,
+          height: plane.height,
+          width: plane.width,
+        );
+      },
+    ).toList();
+
+    final inputImageData = InputImageData(
+      size: imageSize,
+      imageRotation: imageRotation,
+      inputImageFormat: inputImageFormat,
+      planeData: planeData,
+    );
+
+    return InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
   }
 
   @override
@@ -169,7 +182,7 @@ class GameOverlayPainter extends CustomPainter {
     if (poses != null && poses!.isNotEmpty) {
       final posePaint = Paint()..color = Colors.red..strokeWidth = 2;
       for (var pose in poses!) {
-        for (var landmark in pose.landmarks) {
+        for (var landmark in pose.landmarks.values) {
           final x = landmark.x * size.width;
           final y = landmark.y * size.height;
           canvas.drawCircle(Offset(x, y), 5, posePaint);
