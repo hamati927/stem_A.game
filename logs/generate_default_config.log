@@ -1,2 +1,2 @@
 Wrote recommended defaults to configs/default_thresholds.json
-Recommended: {'angle_threshold': 8, 'perfect_t': 1.0, 'great_t': 3.0, 'good_t': 5.0, 'accuracy': 0.9333333333333333}
+Recommended: {'angle_threshold': 14, 'perfect_t': 1.0, 'great_t': 3.0, 'good_t': 5.0, 'accuracy': 0.6666666666666666}

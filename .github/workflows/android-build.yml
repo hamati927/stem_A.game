@@ -33,6 +33,7 @@ jobs:
             ${{ runner.os }}-pub-
 
       - name: Install dependencies
+        working-directory: flutter_application_1
         run: |
           set -e
           for i in 1 2 3; do
@@ -40,10 +41,11 @@ jobs:
           done
 
       - name: Build debug APK
+        working-directory: flutter_application_1
         run: flutter build apk --debug --no-shrink
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug.apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: flutter_application_1/build/app/outputs/flutter-apk/app-debug.apk

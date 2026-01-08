@@ -1,2 +1,2 @@
-Best accuracy 0.867 at perfect_t=1.0, angle_threshold=20
+Best accuracy 0.900 at perfect_t=1.0, angle_threshold=14
 Results saved to logs/optimizer_results.csv and logs/*.png
