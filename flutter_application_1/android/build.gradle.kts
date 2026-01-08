@@ -3,6 +3,14 @@ allprojects {
         google()
         mavenCentral()
     }
+    
+    plugins.withId("com.android.library") {
+        configure<com.android.build.gradle.LibraryExtension> {
+            if (namespace == null) {
+                namespace = "com.example.flutter_application_1"
+            }
+        }
+    }
 }
 
 val newBuildDir: Directory =
