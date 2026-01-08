@@ -92,29 +92,17 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
     );
 
     final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
-
     final InputImageRotation imageRotation = InputImageRotation.rotation0deg;
-
     final InputImageFormat inputImageFormat = InputImageFormat.nv21;
 
-    final planeData = image.planes.map(
-      (Plane plane) {
-        return InputImagePlaneMetadata(
-          bytesPerRow: plane.bytesPerRow,
-          height: plane.height,
-          width: plane.width,
-        );
-      },
-    ).toList();
-
-    final inputImageData = InputImageData(
+    final inputImageMetadata = InputImageMetadata(
       size: imageSize,
-      imageRotation: imageRotation,
-      inputImageFormat: inputImageFormat,
-      planeData: planeData,
+      rotation: imageRotation,
+      format: inputImageFormat,
+      bytesPerRow: image.planes[0].bytesPerRow,
     );
 
-    return InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
+    return InputImage.fromBytes(bytes: bytes, metadata: inputImageMetadata);
   }
 
   @override
