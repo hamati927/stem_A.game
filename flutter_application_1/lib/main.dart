@@ -83,8 +83,15 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
   bool _showSuccess = false;
   
   // 検出閾値
-  final double _squatThreshold = 0.15;
-  final double _stepHeightThreshold = 0.08;
+  double _squatThreshold = 0.15;
+  double _stepHeightThreshold = 0.08;
+  
+  // デバッグモード
+  bool _debugMode = false;
+  String _debugInfo = '';
+  double? _currentSquatRatio;
+  double? _currentLeftStepHeight;
+  double? _currentRightStepHeight;
   
   // 音声プレイヤー
   late AudioPlayer _bgmPlayer;
@@ -259,6 +266,14 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
     if (hipY <= 0) return false;
     
     final ratio = hipKneeDist / hipY;
+    _currentSquatRatio = ratio;
+    
+    if (_debugMode) {
+      _debugInfo = 'Squat Ratio: ${ratio.toStringAsFixed(3)} (threshold: $_squatThreshold)\n'
+                   'Hip confidence: ${leftHip.z.toStringAsFixed(2)}\n'
+                   'Knee confidence: ${leftKnee.z.toStringAsFixed(2)}';
+    }
+    
     return ratio < _squatThreshold;
   }
   
@@ -269,6 +284,15 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
     
     if (leftAnkle == null || leftKnee == null) return false;
     
+    final heightDiff = (leftKnee.y - leftAnkle.y);
+    _currentLeftStepHeight = heightDiff;
+    
+    if (_debugMode) {
+      _debugInfo = 'Left Step Height: ${heightDiff.toStringAsFixed(3)} (threshold: $_stepHeightThreshold)\n'
+                   'Ankle confidence: ${leftAnkle.z.toStringAsFixed(2)}\n'
+                   'Knee confidence: ${leftKnee.z.toStringAsFixed(2)}';
+    }
+    
     return leftAnkle.y < (leftKnee.y - _stepHeightThreshold);
   }
   
@@ -278,6 +302,15 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
     final rightKnee = landmarks[PoseLandmarkType.rightKnee];
     
     if (rightAnkle == null || rightKnee == null) return false;
+    
+    final heightDiff = (rightKnee.y - rightAnkle.y);
+    _currentRightStepHeight = heightDiff;
+    
+    if (_debugMode) {
+      _debugInfo = 'Right Step Height: ${heightDiff.toStringAsFixed(3)} (threshold: $_stepHeightThreshold)\n'
+                   'Ankle confidence: ${rightAnkle.z.toStringAsFixed(2)}\n'
+                   'Knee confidence: ${rightKnee.z.toStringAsFixed(2)}';
+    }
     
     return rightAnkle.y < (rightKnee.y - _stepHeightThreshold);
   }
@@ -347,6 +380,14 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
         title: const Text('下半身リズムゲーム'),
         actions: [
           IconButton(
+            icon: Icon(_debugMode ? Icons.bug_report : Icons.bug_report_outlined),
+            onPressed: () {
+              setState(() {
+                _debugMode = !_debugMode;
+              });
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
               _bgmPlayer.stop();
@@ -365,8 +406,54 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
             painter: GameOverlayPainter(
               pose: _currentPose,
               currentAction: currentAction,
+              debugMode: _debugMode,
             ),
           ),
+          // デバッグ情報パネル
+          if (_debugMode)
+            Positioned(
+              top: 16,
+              right: 16,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.black87,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.cyan, width: 2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'DEBUG INFO',
+                      style: TextStyle(
+                        color: Colors.cyan,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _debugInfo.isEmpty ? 'Waiting for pose...' : _debugInfo,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontFamily: 'monospace',
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Squat Threshold: ${_squatThreshold.toStringAsFixed(2)}',
+                      style: const TextStyle(color: Colors.yellow, fontSize: 10),
+                    ),
+                    Text(
+                      'Step Height Threshold: ${_stepHeightThreshold.toStringAsFixed(3)}',
+                      style: const TextStyle(color: Colors.yellow, fontSize: 10),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           // HUD
           Positioned(
             top: 16,
@@ -388,7 +475,7 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
             ),
           ),
           // 現在のアクション表示
-          if (currentAction != null && remainingTime != null)
+          if (currentAction != null && remainingTime != null && !_debugMode)
             Positioned(
               top: 100,
               left: 16,
@@ -416,6 +503,66 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
                         color: remainingTime < 1.0 ? Colors.red : Colors.white,
                         fontSize: 20,
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          // デバッグ用の閾値調整スライダー
+          if (_debugMode)
+            Positioned(
+              bottom: 16,
+              left: 16,
+              right: 16,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.black87,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.yellow, width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Squat Threshold Adjustment',
+                      style: TextStyle(color: Colors.yellow, fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: [
+                        Text('${_squatThreshold.toStringAsFixed(3)}', style: const TextStyle(color: Colors.white)),
+                        Expanded(
+                          child: Slider(
+                            value: _squatThreshold,
+                            min: 0.05,
+                            max: 0.5,
+                            onChanged: (value) {
+                              setState(() => _squatThreshold = value);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Step Height Threshold Adjustment',
+                      style: TextStyle(color: Colors.yellow, fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: [
+                        Text('${_stepHeightThreshold.toStringAsFixed(3)}', style: const TextStyle(color: Colors.white)),
+                        Expanded(
+                          child: Slider(
+                            value: _stepHeightThreshold,
+                            min: 0.01,
+                            max: 0.3,
+                            onChanged: (value) {
+                              setState(() => _stepHeightThreshold = value);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -490,19 +637,64 @@ class _RhythmGameScreenState extends State<RhythmGameScreen> {
 class GameOverlayPainter extends CustomPainter {
   final Pose? pose;
   final GameAction? currentAction;
+  final bool debugMode;
 
-  GameOverlayPainter({this.pose, this.currentAction});
+  GameOverlayPainter({this.pose, this.currentAction, this.debugMode = false});
 
   @override
   void paint(Canvas canvas, Size size) {
     // 骨格を描画
     if (pose != null) {
       _drawSkeleton(canvas, size, pose!);
+      
+      // デバッグモード時にランドマーク情報を表示
+      if (debugMode) {
+        _drawDebugInfo(canvas, size, pose!);
+      }
     }
     
     // 現在のアクションの見本を描画
-    if (currentAction != null) {
+    if (currentAction != null && !debugMode) {
       _drawActionGuide(canvas, currentAction!);
+    }
+  }
+  
+  void _drawDebugInfo(Canvas canvas, Size size, Pose pose) {
+    final paint = Paint()
+      ..color = Colors.cyan
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+    
+    final textPainter = TextPainter(
+      textDirection: TextDirection.ltr,
+    );
+    
+    // 主要なランドマークの座標を描画
+    const landmarks = [
+      PoseLandmarkType.leftHip,
+      PoseLandmarkType.leftKnee,
+      PoseLandmarkType.leftAnkle,
+      PoseLandmarkType.rightHip,
+      PoseLandmarkType.rightKnee,
+      PoseLandmarkType.rightAnkle,
+    ];
+    
+    for (final landmarkType in landmarks) {
+      final landmark = pose.landmarks[landmarkType];
+      if (landmark != null) {
+        final x = landmark.x * size.width;
+        final y = landmark.y * size.height;
+        
+        // 信頼度に応じた色
+        final confidence = landmark.z;
+        Color color = confidence > 0.7 ? Colors.green : (confidence > 0.5 ? Colors.yellow : Colors.red);
+        
+        canvas.drawCircle(
+          Offset(x, y),
+          10,
+          Paint()..color = color..style = PaintingStyle.stroke..strokeWidth = 2,
+        );
+      }
     }
   }
   
@@ -619,6 +811,6 @@ class GameOverlayPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant GameOverlayPainter oldDelegate) {
-    return pose != oldDelegate.pose || currentAction != oldDelegate.currentAction;
+    return pose != oldDelegate.pose || currentAction != oldDelegate.currentAction || debugMode != oldDelegate.debugMode;
   }
 }
