@@ -222,6 +222,22 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
                 ),
               ),
             ),
+          if (_currentPose != null)
+            Positioned(
+              top: 56,
+              left: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'Landmarks: ${_currentPose!.landmarks.length}/33',
+                  style: const TextStyle(color: Colors.white, fontSize: 11),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -230,6 +246,7 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
 
 class PoseOverlayPainter extends CustomPainter {
   final Pose? pose;
+  static const double confidenceThreshold = 0.5;
 
   PoseOverlayPainter({this.pose});
 
@@ -238,7 +255,7 @@ class PoseOverlayPainter extends CustomPainter {
     if (pose == null) return;
     final landmarks = pose!.landmarks;
 
-    // Lower-body only (hips to feet)
+    // Full body skeleton with confidence filtering
     final pointPaint = Paint()
       ..color = Colors.red
       ..style = PaintingStyle.fill;
@@ -246,13 +263,6 @@ class PoseOverlayPainter extends CustomPainter {
       ..color = Colors.green
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
-
-    void drawPoint(PoseLandmarkType type) {
-      final lm = landmarks[type];
-      if (lm != null) {
-        canvas.drawCircle(Offset(lm.x * size.width, lm.y * size.height), 5, pointPaint);
-      }
-    }
 
     void drawLine(PoseLandmarkType a, PoseLandmarkType b) {
       final la = landmarks[a];
@@ -266,35 +276,37 @@ class PoseOverlayPainter extends CustomPainter {
       }
     }
 
-    // Draw points for hips, knees, ankles, heels, toes
-    for (final type in [
-      PoseLandmarkType.leftHip,
-      PoseLandmarkType.rightHip,
-      PoseLandmarkType.leftKnee,
-      PoseLandmarkType.rightKnee,
-      PoseLandmarkType.leftAnkle,
-      PoseLandmarkType.rightAnkle,
-      PoseLandmarkType.leftHeel,
-      PoseLandmarkType.rightHeel,
-      PoseLandmarkType.leftFootIndex,
-      PoseLandmarkType.rightFootIndex,
-    ]) {
-      drawPoint(type);
+    // Draw all keypoints
+    for (final lm in landmarks.values) {
+      canvas.drawCircle(Offset(lm.x * size.width, lm.y * size.height), 4, pointPaint);
     }
 
-    // Draw lines hips->knees->ankles->feet
+    // Head connections
+    drawLine(PoseLandmarkType.leftEye, PoseLandmarkType.rightEye);
+    drawLine(PoseLandmarkType.leftEar, PoseLandmarkType.leftEye);
+    drawLine(PoseLandmarkType.rightEar, PoseLandmarkType.rightEye);
+
+    // Body connections
+    drawLine(PoseLandmarkType.leftShoulder, PoseLandmarkType.rightShoulder);
+    drawLine(PoseLandmarkType.leftShoulder, PoseLandmarkType.leftHip);
+    drawLine(PoseLandmarkType.rightShoulder, PoseLandmarkType.rightHip);
+    drawLine(PoseLandmarkType.leftHip, PoseLandmarkType.rightHip);
+
+    // Left arm
+    drawLine(PoseLandmarkType.leftShoulder, PoseLandmarkType.leftElbow);
+    drawLine(PoseLandmarkType.leftElbow, PoseLandmarkType.leftWrist);
+
+    // Right arm
+    drawLine(PoseLandmarkType.rightShoulder, PoseLandmarkType.rightElbow);
+    drawLine(PoseLandmarkType.rightElbow, PoseLandmarkType.rightWrist);
+
+    // Left leg
     drawLine(PoseLandmarkType.leftHip, PoseLandmarkType.leftKnee);
     drawLine(PoseLandmarkType.leftKnee, PoseLandmarkType.leftAnkle);
-    drawLine(PoseLandmarkType.leftAnkle, PoseLandmarkType.leftHeel);
-    drawLine(PoseLandmarkType.leftHeel, PoseLandmarkType.leftFootIndex);
 
+    // Right leg
     drawLine(PoseLandmarkType.rightHip, PoseLandmarkType.rightKnee);
     drawLine(PoseLandmarkType.rightKnee, PoseLandmarkType.rightAnkle);
-    drawLine(PoseLandmarkType.rightAnkle, PoseLandmarkType.rightHeel);
-    drawLine(PoseLandmarkType.rightHeel, PoseLandmarkType.rightFootIndex);
-
-    // Hip-to-hip line for balance reference
-    drawLine(PoseLandmarkType.leftHip, PoseLandmarkType.rightHip);
   }
 
   @override
