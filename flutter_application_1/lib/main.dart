@@ -63,57 +63,46 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
     // Dispose previous controller before switching
     await _cameraController?.dispose();
     _currentPose = null;
+    
+    final preferred =
+      _useFrontCamera ? CameraLensDirection.front : CameraLensDirection.back;
 
-    final preferred = _useFrontCamera ? CameraLensDirection.front : CameraLensDirection.back;
-    CameraDescription? camera;
+    CameraDescription camera;
     try {
-      camera = widget.cameras.firstWhere((c) => c.lensDirection == preferred);
+      camera = widget.cameras.firstWhere(
+        (c) => c.lensDirection == preferred,
+      );
     } catch (_) {
-      camera = null;
+      camera = widget.cameras.first;
     }
-    camera ??= widget.cameras.firstWhere(
-      (c) => c.lensDirection != preferred,
-      orElse: () => widget.cameras.first,
-    );
+    
     _currentCamera = camera;
-
+    
     _cameraController = CameraController(
       camera,
       ResolutionPreset.medium,
       enableAudio: false,
       imageFormatGroup: ImageFormatGroup.yuv420,
     );
-
-    await _cameraController!.initialize();
-    debugPrint('Using camera: ${_currentCamera?.name ?? _currentCamera?.lensDirection}');
-    _cameraController!.startImageStream(_processCameraImage);
-    bool _logged = false; // クラス変数として追加
     
-    void _processCameraImage(CameraImage image) async {
-      if (!_logged) {
-        debugPrint('planes: ${image.planes.length}');
-        debugPrint('format: ${image.format.group}');
-        debugPrint('bytesPerRow: ${image.planes[0].bytesPerRow}');
-        debugPrint('bytesPerPixel: ${image.planes[0].bytesPerPixel}');
-        debugPrint('size: ${image.width} x ${image.height}');
-        debugPrint('sensorOrientation: ${_cameraController.description.sensorOrientation}');
-        _logged = true;
-      }
-    }
-
-    // カメラのセンサー向きから回転を設定
+    // ★ ここで初期化
+    await _cameraController!.initialize();
+    
     try {
       final degrees = _cameraController!.description.sensorOrientation;
       _imageRotation = _rotationFromDegrees(degrees);
     } catch (_) {
       _imageRotation = InputImageRotation.rotation0deg;
     }
-
+    
+    // ★ 回転設定後にストリーム開始
+    await _cameraController!.startImageStream(_processCameraImage);
+    
     if (mounted) {
       setState(() {});
     }
   }
-
+  
   Future<void> _switchCamera() async {
     setState(() {
       _useFrontCamera = !_useFrontCamera;
