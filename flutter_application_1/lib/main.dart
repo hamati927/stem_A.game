@@ -38,9 +38,11 @@ class PoseTrackerScreen extends StatefulWidget {
 
 class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
   CameraController? _cameraController;
+  CameraDescription? _currentCamera;
   PoseDetector? _poseDetector;
   bool _isDetecting = false;
   Pose? _currentPose;
+  bool _useFrontCamera = true;
 
   // 画像回転（カメラのセンサー向き）
   InputImageRotation? _imageRotation;
@@ -53,14 +55,22 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
   }
 
   Future<void> _initializeCamera() async {
-    // Prefer front camera (user-facing). Fallback to back if front is unavailable.
-    final camera = widget.cameras.firstWhere(
-      (c) => c.lensDirection == CameraLensDirection.front,
-      orElse: () => widget.cameras.firstWhere(
-        (c) => c.lensDirection == CameraLensDirection.back,
-        orElse: () => widget.cameras.first,
-      ),
+    // Dispose previous controller before switching
+    await _cameraController?.dispose();
+    _currentPose = null;
+
+    final preferred = _useFrontCamera ? CameraLensDirection.front : CameraLensDirection.back;
+    CameraDescription? camera;
+    try {
+      camera = widget.cameras.firstWhere((c) => c.lensDirection == preferred);
+    } catch (_) {
+      camera = null;
+    }
+    camera ??= widget.cameras.firstWhere(
+      (c) => c.lensDirection != preferred,
+      orElse: () => widget.cameras.first,
     );
+    _currentCamera = camera;
 
     _cameraController = CameraController(
       camera,
@@ -70,6 +80,7 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
     );
 
     await _cameraController!.initialize();
+    debugPrint('Using camera: ${_currentCamera?.name ?? _currentCamera?.lensDirection}');
     _cameraController!.startImageStream(_processCameraImage);
 
     // カメラのセンサー向きから回転を設定
@@ -83,6 +94,13 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  Future<void> _switchCamera() async {
+    setState(() {
+      _useFrontCamera = !_useFrontCamera;
+    });
+    await _initializeCamera();
   }
 
   InputImageRotation _rotationFromDegrees(int degrees) {
@@ -168,6 +186,13 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('全身骨格トラッカー'),
+        actions: [
+          IconButton(
+            tooltip: 'カメラ切替 (前/後)',
+            icon: const Icon(Icons.cameraswitch),
+            onPressed: _switchCamera,
+          ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
