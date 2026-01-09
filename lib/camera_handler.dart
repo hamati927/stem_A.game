@@ -32,7 +32,7 @@ class CameraHandler {
     if (_isStreaming) return;
     _isStreaming = true;
 
-    _controller.startImageStream((CameraImage image) async {
+    _controller.startImageStream((CameraImage image) {
       // ここで CameraImage を Isolate に安全に送るために TransferableTypedData に変換する
       // 実運用ではプラットフォーム向けに最適化した YUV->RGB 変換を Isolate 側で行うのが良い
 
@@ -43,7 +43,9 @@ class CameraHandler {
         bytes.addAll(p.bytes);
       }
       final transferable = TransferableTypedData.fromList([Uint8List.fromList(bytes)]);
-      onFrame(transferable, image.width, image.height, _controller.value.deviceOrientation.index);
+      // sensorOrientation を使用（0, 90, 180, 270の整数値）
+      final rotation = _controller.description.sensorOrientation;
+      onFrame(transferable, image.width, image.height, rotation);
     });
   }
 

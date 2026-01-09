@@ -67,7 +67,11 @@ class PosePainter extends CustomPainter {
     // Repaint if number of keypoints changed
     if (oldDelegate.keypoints.length != keypoints.length) return true;
     // Repaint if any keypoint changed
-    for (var i = 0; i < keypoints.length; i++) {
+    // Safety check: only compare up to the minimum length
+    final minLen = keypoints.length < oldDelegate.keypoints.length
+        ? keypoints.length
+        : oldDelegate.keypoints.length;
+    for (var i = 0; i < minLen; i++) {
       final a = keypoints[i];
       final b = oldDelegate.keypoints[i];
       if (a.x != b.x || a.y != b.y || a.score != b.score) return true;
