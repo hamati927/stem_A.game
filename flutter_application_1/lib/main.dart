@@ -321,16 +321,6 @@ class PoseOverlayPainter extends CustomPainter {
     // Debug: print lines drawn count
     debugPrint('Skeleton: ${landmarks.length} landmarks, $linesDrawn lines drawn');
   }
-    drawLine(PoseLandmarkType.rightElbow, PoseLandmarkType.rightWrist);
-
-    // Left leg
-    drawLine(PoseLandmarkType.leftHip, PoseLandmarkType.leftKnee);
-    drawLine(PoseLandmarkType.leftKnee, PoseLandmarkType.leftAnkle);
-
-    // Right leg
-    drawLine(PoseLandmarkType.rightHip, PoseLandmarkType.rightKnee);
-    drawLine(PoseLandmarkType.rightKnee, PoseLandmarkType.rightAnkle);
-  }
 
   @override
   bool shouldRepaint(covariant PoseOverlayPainter oldDelegate) {
