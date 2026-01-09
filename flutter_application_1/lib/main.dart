@@ -43,6 +43,7 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
   bool _isDetecting = false;
   Pose? _currentPose;
   bool _useFrontCamera = true;
+  bool _logged = false; // one-time camera metadata log
 
   // 画像回転（カメラのセンサー向き）
   InputImageRotation? _imageRotation;
@@ -84,10 +85,9 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
       enableAudio: false,
       imageFormatGroup: ImageFormatGroup.yuv420,
     );
-    
-    // ★ ここで初期化
     await _cameraController!.initialize();
-    
+    debugPrint('Using camera: ${_currentCamera?.name ?? _currentCamera?.lensDirection}');
+    // カメラのセンサー向きから回転を設定
     try {
       final degrees = _cameraController!.description.sensorOrientation;
       _imageRotation = _rotationFromDegrees(degrees);
@@ -126,6 +126,16 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
   }
 
   Future<void> _processCameraImage(CameraImage image) async {
+    if (!_logged) {
+      debugPrint('planes: ${image.planes.length}');
+      debugPrint('format: ${image.format.group}');
+      debugPrint('bytesPerRow: ${image.planes[0].bytesPerRow}');
+      debugPrint('bytesPerPixel: ${image.planes[0].bytesPerPixel}');
+      debugPrint('size: ${image.width} x ${image.height}');
+      debugPrint('sensorOrientation: ${_cameraController?.description.sensorOrientation}');
+      _logged = true;
+    }
+
     if (_isDetecting || _poseDetector == null) return;
 
     _isDetecting = true;
