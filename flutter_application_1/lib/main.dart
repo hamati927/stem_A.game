@@ -53,11 +53,11 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
   }
 
   Future<void> _initializeCamera() async {
-    // Prefer back camera for lower-body view (wider FOV). Fallback to front if unavailable.
+    // Prefer front camera (user-facing). Fallback to back if front is unavailable.
     final camera = widget.cameras.firstWhere(
-      (c) => c.lensDirection == CameraLensDirection.back,
+      (c) => c.lensDirection == CameraLensDirection.front,
       orElse: () => widget.cameras.firstWhere(
-        (c) => c.lensDirection == CameraLensDirection.front,
+        (c) => c.lensDirection == CameraLensDirection.back,
         orElse: () => widget.cameras.first,
       ),
     );
