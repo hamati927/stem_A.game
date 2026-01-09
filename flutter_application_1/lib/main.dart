@@ -53,9 +53,13 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
   }
 
   Future<void> _initializeCamera() async {
+    // Prefer back camera for lower-body view (wider FOV). Fallback to front if unavailable.
     final camera = widget.cameras.firstWhere(
-      (c) => c.lensDirection == CameraLensDirection.front,
-      orElse: () => widget.cameras.first,
+      (c) => c.lensDirection == CameraLensDirection.back,
+      orElse: () => widget.cameras.firstWhere(
+        (c) => c.lensDirection == CameraLensDirection.front,
+        orElse: () => widget.cameras.first,
+      ),
     );
 
     _cameraController = CameraController(
@@ -209,21 +213,23 @@ class PoseOverlayPainter extends CustomPainter {
     if (pose == null) return;
     final landmarks = pose!.landmarks;
 
-    // 点の描画
+    // Lower-body only (hips to feet)
     final pointPaint = Paint()
       ..color = Colors.red
       ..style = PaintingStyle.fill;
-    for (final lm in landmarks.values) {
-      canvas.drawCircle(Offset(lm.x * size.width, lm.y * size.height), 5, pointPaint);
-    }
-
-    // 線の描画（全身）
     final linePaint = Paint()
       ..color = Colors.green
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
-    void draw(PoseLandmarkType a, PoseLandmarkType b) {
+    void drawPoint(PoseLandmarkType type) {
+      final lm = landmarks[type];
+      if (lm != null) {
+        canvas.drawCircle(Offset(lm.x * size.width, lm.y * size.height), 5, pointPaint);
+      }
+    }
+
+    void drawLine(PoseLandmarkType a, PoseLandmarkType b) {
       final la = landmarks[a];
       final lb = landmarks[b];
       if (la != null && lb != null) {
@@ -235,34 +241,35 @@ class PoseOverlayPainter extends CustomPainter {
       }
     }
 
-    // 頭部
-    draw(PoseLandmarkType.leftEye, PoseLandmarkType.rightEye);
-    draw(PoseLandmarkType.leftEye, PoseLandmarkType.leftEar);
-    draw(PoseLandmarkType.rightEye, PoseLandmarkType.rightEar);
-    draw(PoseLandmarkType.nose, PoseLandmarkType.leftEye);
-    draw(PoseLandmarkType.nose, PoseLandmarkType.rightEye);
+    // Draw points for hips, knees, ankles, heels, toes
+    for (final type in [
+      PoseLandmarkType.leftHip,
+      PoseLandmarkType.rightHip,
+      PoseLandmarkType.leftKnee,
+      PoseLandmarkType.rightKnee,
+      PoseLandmarkType.leftAnkle,
+      PoseLandmarkType.rightAnkle,
+      PoseLandmarkType.leftHeel,
+      PoseLandmarkType.rightHeel,
+      PoseLandmarkType.leftFootIndex,
+      PoseLandmarkType.rightFootIndex,
+    ]) {
+      drawPoint(type);
+    }
 
-    // 胴体
-    draw(PoseLandmarkType.leftShoulder, PoseLandmarkType.rightShoulder);
-    draw(PoseLandmarkType.leftShoulder, PoseLandmarkType.leftHip);
-    draw(PoseLandmarkType.rightShoulder, PoseLandmarkType.rightHip);
-    draw(PoseLandmarkType.leftHip, PoseLandmarkType.rightHip);
+    // Draw lines hips->knees->ankles->feet
+    drawLine(PoseLandmarkType.leftHip, PoseLandmarkType.leftKnee);
+    drawLine(PoseLandmarkType.leftKnee, PoseLandmarkType.leftAnkle);
+    drawLine(PoseLandmarkType.leftAnkle, PoseLandmarkType.leftHeel);
+    drawLine(PoseLandmarkType.leftHeel, PoseLandmarkType.leftFootIndex);
 
-    // 左腕
-    draw(PoseLandmarkType.leftShoulder, PoseLandmarkType.leftElbow);
-    draw(PoseLandmarkType.leftElbow, PoseLandmarkType.leftWrist);
+    drawLine(PoseLandmarkType.rightHip, PoseLandmarkType.rightKnee);
+    drawLine(PoseLandmarkType.rightKnee, PoseLandmarkType.rightAnkle);
+    drawLine(PoseLandmarkType.rightAnkle, PoseLandmarkType.rightHeel);
+    drawLine(PoseLandmarkType.rightHeel, PoseLandmarkType.rightFootIndex);
 
-    // 右腕
-    draw(PoseLandmarkType.rightShoulder, PoseLandmarkType.rightElbow);
-    draw(PoseLandmarkType.rightElbow, PoseLandmarkType.rightWrist);
-
-    // 左脚
-    draw(PoseLandmarkType.leftHip, PoseLandmarkType.leftKnee);
-    draw(PoseLandmarkType.leftKnee, PoseLandmarkType.leftAnkle);
-
-    // 右脚
-    draw(PoseLandmarkType.rightHip, PoseLandmarkType.rightKnee);
-    draw(PoseLandmarkType.rightKnee, PoseLandmarkType.rightAnkle);
+    // Hip-to-hip line for balance reference
+    drawLine(PoseLandmarkType.leftHip, PoseLandmarkType.rightHip);
   }
 
   @override
