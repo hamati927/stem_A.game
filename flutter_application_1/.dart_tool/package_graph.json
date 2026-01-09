@@ -10,9 +10,9 @@
         "audioplayers",
         "camera",
         "flutter",
-        "google_mlkit_pose_detection",
         "image",
-        "permission_handler"
+        "permission_handler",
+        "tflite_flutter"
       ],
       "devDependencies": [
         "flutter_lints",
@@ -86,11 +86,14 @@
       ]
     },
     {
-      "name": "google_mlkit_pose_detection",
-      "version": "0.12.1",
+      "name": "tflite_flutter",
+      "version": "0.11.0",
       "dependencies": [
+        "ffi",
         "flutter",
-        "google_mlkit_commons"
+        "path",
+        "plugin_platform_interface",
+        "quiver"
       ]
     },
     {
@@ -363,10 +366,22 @@
       ]
     },
     {
-      "name": "google_mlkit_commons",
-      "version": "0.8.1",
+      "name": "ffi",
+      "version": "2.1.5",
+      "dependencies": []
+    },
+    {
+      "name": "quiver",
+      "version": "3.2.2",
       "dependencies": [
-        "flutter"
+        "matcher"
+      ]
+    },
+    {
+      "name": "plugin_platform_interface",
+      "version": "2.1.8",
+      "dependencies": [
+        "meta"
       ]
     },
     {
@@ -579,13 +594,6 @@
       ]
     },
     {
-      "name": "plugin_platform_interface",
-      "version": "2.1.8",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
       "name": "petitparser",
       "version": "7.0.1",
       "dependencies": [
@@ -626,11 +634,6 @@
       "dependencies": [
         "collection"
       ]
-    },
-    {
-      "name": "ffi",
-      "version": "2.1.5",
-      "dependencies": []
     },
     {
       "name": "platform",

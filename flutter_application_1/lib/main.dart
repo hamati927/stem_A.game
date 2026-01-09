@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:typed_data';
 
 void main() async {
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '全身骨格トラッカー',
+      title: '全身骨格トラッカー (MoveNet)',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,
@@ -25,6 +25,27 @@ class MyApp extends StatelessWidget {
       home: PoseTrackerScreen(cameras: cameras),
     );
   }
+}
+
+// MoveNet output format: 17 keypoints, each (y, x, score)
+class PoseLandmark {
+  final double y;
+  final double x;
+  final double score;
+  final int index;
+  
+  PoseLandmark({
+    required this.y,
+    required this.x,
+    required this.score,
+    required this.index,
+  });
+}
+
+class Pose {
+  final List<PoseLandmark> landmarks;
+  
+  Pose({required this.landmarks});
 }
 
 class PoseTrackerScreen extends StatefulWidget {
@@ -37,31 +58,46 @@ class PoseTrackerScreen extends StatefulWidget {
 }
 
 class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
+  static const int inputSize = 192;
+  
   CameraController? _cameraController;
   CameraDescription? _currentCamera;
-  PoseDetector? _poseDetector;
+  Interpreter? _tfliteInterpreter;
   bool _isDetecting = false;
   Pose? _currentPose;
   bool _useFrontCamera = true;
-  bool _logged = false; // one-time camera metadata log
+  bool _logged = false;
 
-  // 画像回転（カメラのセンサー向き）
-  InputImageRotation? _imageRotation;
+  // MoveNet keypoint names (17 points)
+  static const List<String> keypointNames = [
+    'nose',
+    'leftEye', 'rightEye',
+    'leftEar', 'rightEar',
+    'leftShoulder', 'rightShoulder',
+    'leftElbow', 'rightElbow',
+    'leftWrist', 'rightWrist',
+    'leftHip', 'rightHip',
+    'leftKnee', 'rightKnee',
+    'leftAnkle', 'rightAnkle',
+  ];
 
   @override
   void initState() {
     super.initState();
     _initializeCamera();
-    _poseDetector = PoseDetector(
-      options: PoseDetectorOptions(
-        mode: PoseDetectionMode.single,
-        model: PoseDetectionModel.base,
-      ),
-    );
+    _loadTFLiteModel();
+  }
+
+  Future<void> _loadTFLiteModel() async {
+    try {
+      _tfliteInterpreter = await Interpreter.fromAsset('assets/models/movenet_singlepose_lightning.tflite');
+      debugPrint('TFLite model loaded successfully');
+    } catch (e) {
+      debugPrint('Error loading TFLite model: $e');
+    }
   }
 
   Future<void> _initializeCamera() async {
-    // Dispose previous controller before switching
     await _cameraController?.dispose();
     _currentPose = null;
     
@@ -70,9 +106,7 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
 
     CameraDescription camera;
     try {
-      camera = widget.cameras.firstWhere(
-        (c) => c.lensDirection == preferred,
-      );
+      camera = widget.cameras.firstWhere((c) => c.lensDirection == preferred);
     } catch (_) {
       camera = widget.cameras.first;
     }
@@ -85,22 +119,13 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
       enableAudio: false,
       imageFormatGroup: ImageFormatGroup.yuv420,
     );
+    
     await _cameraController!.initialize();
-    debugPrint('Using camera: ${_currentCamera?.name ?? _currentCamera?.lensDirection}');
-    // カメラのセンサー向きから回転を設定
-    try {
-      final degrees = _cameraController!.description.sensorOrientation;
-      _imageRotation = _rotationFromDegrees(degrees);
-    } catch (_) {
-      _imageRotation = InputImageRotation.rotation0deg;
-    }
+    debugPrint('Using camera: ${_currentCamera?.lensDirection}');
     
-    // ★ 回転設定後にストリーム開始
+    if (!mounted) return;
     await _cameraController!.startImageStream(_processCameraImage);
-    
-    if (mounted) {
-      setState(() {});
-    }
+    setState(() {});
   }
   
   Future<void> _switchCamera() async {
@@ -110,102 +135,95 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
     await _initializeCamera();
   }
 
-  InputImageRotation _rotationFromDegrees(int degrees) {
-    switch (degrees) {
-      case 0:
-        return InputImageRotation.rotation0deg;
-      case 90:
-        return InputImageRotation.rotation90deg;
-      case 180:
-        return InputImageRotation.rotation180deg;
-      case 270:
-        return InputImageRotation.rotation270deg;
-      default:
-        return InputImageRotation.rotation0deg;
-    }
-  }
-
   Future<void> _processCameraImage(CameraImage image) async {
+    if (_isDetecting || _tfliteInterpreter == null) return;
+
     if (!_logged) {
-      debugPrint('planes: ${image.planes.length}');
-      debugPrint('format: ${image.format.group}');
-      debugPrint('bytesPerRow: ${image.planes[0].bytesPerRow}');
-      debugPrint('bytesPerPixel: ${image.planes[0].bytesPerPixel}');
-      debugPrint('size: ${image.width} x ${image.height}');
-      debugPrint('sensorOrientation: ${_cameraController?.description.sensorOrientation}');
+      debugPrint('CameraImage: w=${image.width}, h=${image.height}, planes=${image.planes.length}');
       _logged = true;
     }
-
-    if (_isDetecting || _poseDetector == null) return;
 
     _isDetecting = true;
 
     try {
-      debugPrint(
-        'CameraImage: '
-        'w=${image.width}, h=${image.height}, '
-        'planes=${image.planes.length}'
-      );
-
-      final inputImage = _convertCameraImage(image);
-      final poses = await _poseDetector!.processImage(inputImage);
-
-      debugPrint(
-        'PoseDetector result: poses=${poses.length}'
-      );
+      // Convert YUV420 to RGB and resize
+      final inputData = await _yuvToRgbAndNormalize(image);
       
-      if (poses.isNotEmpty) {
-        debugPrint(
-          'Landmarks count=${poses.first.landmarks.length}'
-        );
+      // Run TFLite inference
+      final outputData = List<double>.filled(1 * 17 * 3, 0.0);
+      _tfliteInterpreter!.runForMultipleInputs([inputData], {'output': outputData} as Map<int, Object>);
+      
+      // Parse output: [1, 17, 3] -> 17 keypoints with (y, x, score)
+      final List<PoseLandmark> landmarks = [];
+      
+      for (int i = 0; i < 17; i++) {
+        final idx = i * 3;
+        final y = (outputData[idx] as double) / inputSize;
+        final x = (outputData[idx + 1] as double) / inputSize;
+        final score = (outputData[idx + 2] as double);
+        
+        landmarks.add(PoseLandmark(
+          y: y.clamp(0.0, 1.0),
+          x: x.clamp(0.0, 1.0),
+          score: score,
+          index: i,
+        ));
       }
+      
+      debugPrint('Detected ${landmarks.length} keypoints');
       
       if (mounted) {
         setState(() {
-          _currentPose = poses.isNotEmpty ? poses.first : null;
-          });
-        }
-      } catch (e, st) {
-      debugPrint('Error processing image: $e');
-      debugPrint('$st');
+          _currentPose = Pose(landmarks: landmarks);
+        });
       }
+    } catch (e, st) {
+      debugPrint('Error processing image: $e\n$st');
+    }
 
     _isDetecting = false;
   }
-  
-  InputImage _convertCameraImage(CameraImage image) {
-    final bytes = Uint8List.fromList(
-      image.planes.fold<List<int>>(
-        [],
-        (previousValue, plane) => previousValue..addAll(plane.bytes),
-      ),
-    );
 
-    final Size imageSize = Size(
-      image.width.toDouble(),
-      image.height.toDouble(),
-    );
-
-    final InputImageRotation rotation = _imageRotation ?? InputImageRotation.rotation0deg;
-    final InputImageFormat format = InputImageFormat.nv21;
-
-    final inputImageMetadata = InputImageMetadata(
-      size: imageSize,
-      rotation: rotation,
-      format: format,
-      bytesPerRow: image.planes[0].bytesPerRow,
-    );
-
-    return InputImage.fromBytes(
-      bytes: bytes,
-      metadata: inputImageMetadata,
-    );
+  Future<List> _yuvToRgbAndNormalize(CameraImage image) async {
+    final int width = image.width;
+    final int height = image.height;
+    final List<dynamic> output = [];
+    
+    // Simple YUV420 to RGB conversion
+    final Uint8List yPlane = image.planes[0].bytes;
+    final Uint8List uPlane = image.planes[1].bytes;
+    final Uint8List vPlane = image.planes[2].bytes;
+    
+    final int yRowStride = image.planes[0].bytesPerRow;
+    final int uvRowStride = image.planes[1].bytesPerRow;
+    final int uvPixelStride = image.planes[1].bytesPerPixel ?? 1;
+    
+    for (int y = 0; y < height; y++) {
+      final List<num> row = [];
+      for (int x = 0; x < width; x++) {
+        final int yIdx = y * yRowStride + x;
+        final int uvIdx = (y ~/ 2) * uvRowStride + (x ~/ 2) * uvPixelStride;
+        
+        final int yVal = yPlane[yIdx] & 0xff;
+        final int uVal = (uPlane[uvIdx] & 0xff) - 128;
+        final int vVal = (vPlane[uvIdx] & 0xff) - 128;
+        
+        int r = (yVal + (1.402 * vVal)).clamp(0, 255).toInt();
+        int g = (yVal - (0.344 * uVal) - (0.714 * vVal)).clamp(0, 255).toInt();
+        int b = (yVal + (1.772 * uVal)).clamp(0, 255).toInt();
+        
+        row.addAll([(r / 127.5 - 1.0), (g / 127.5 - 1.0), (b / 127.5 - 1.0)]);
+      }
+      output.add(row);
+    }
+    
+    return [output];
   }
 
   @override
   void dispose() {
     _cameraController?.dispose();
-    _poseDetector?.close();
+    _tfliteInterpreter?.close();
     super.dispose();
   }
 
@@ -219,7 +237,7 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('全身骨格トラッカー'),
+        title: const Text('全身骨格トラッカー (MoveNet)'),
         actions: [
           IconButton(
             tooltip: 'カメラ切替 (前/後)',
@@ -233,9 +251,7 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
         children: [
           CameraPreview(_cameraController!),
           CustomPaint(
-            painter: PoseOverlayPainter(
-              pose: _currentPose,
-            ),
+            painter: PoseOverlayPainter(pose: _currentPose),
           ),
           if (_currentPose == null)
             Positioned(
@@ -267,7 +283,7 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  'Landmarks: ${_currentPose!.landmarks.length}/33',
+                  'Landmarks: ${_currentPose!.landmarks.length}/17 (MoveNet)',
                   style: const TextStyle(color: Colors.white, fontSize: 11),
                 ),
               ),
@@ -289,7 +305,6 @@ class PoseOverlayPainter extends CustomPainter {
     if (pose == null) return;
     final landmarks = pose!.landmarks;
 
-    // Full body skeleton with confidence filtering
     final pointPaint = Paint()
       ..color = Colors.red
       ..style = PaintingStyle.fill;
@@ -300,10 +315,16 @@ class PoseOverlayPainter extends CustomPainter {
 
     int linesDrawn = 0;
 
-    void drawLine(PoseLandmarkType a, PoseLandmarkType b) {
-      final la = landmarks[a];
-      final lb = landmarks[b];
-      if (la != null && lb != null) {
+    // Filter landmarks by confidence
+    final validLandmarks = {
+      for (var lm in landmarks)
+        lm.index: lm
+    };
+
+    void drawLine(int aIdx, int bIdx) {
+      final la = validLandmarks[aIdx];
+      final lb = validLandmarks[bIdx];
+      if (la != null && lb != null && la.score > confidenceThreshold && lb.score > confidenceThreshold) {
         canvas.drawLine(
           Offset(la.x * size.width, la.y * size.height),
           Offset(lb.x * size.width, lb.y * size.height),
@@ -314,38 +335,47 @@ class PoseOverlayPainter extends CustomPainter {
     }
 
     // Draw all keypoints
-    for (final lm in landmarks.values) {
-      canvas.drawCircle(Offset(lm.x * size.width, lm.y * size.height), 4, pointPaint);
+    for (final lm in landmarks) {
+      if (lm.score > confidenceThreshold) {
+        canvas.drawCircle(Offset(lm.x * size.width, lm.y * size.height), 4, pointPaint);
+      }
     }
 
+    // MoveNet keypoint indices:
+    // 0=nose, 1=leftEye, 2=rightEye, 3=leftEar, 4=rightEar,
+    // 5=leftShoulder, 6=rightShoulder, 7=leftElbow, 8=rightElbow,
+    // 9=leftWrist, 10=rightWrist, 11=leftHip, 12=rightHip,
+    // 13=leftKnee, 14=rightKnee, 15=leftAnkle, 16=rightAnkle
+
     // Head connections
-    drawLine(PoseLandmarkType.leftEye, PoseLandmarkType.rightEye);
-    drawLine(PoseLandmarkType.leftEar, PoseLandmarkType.leftEye);
-    drawLine(PoseLandmarkType.rightEar, PoseLandmarkType.rightEye);
+    drawLine(1, 2);   // leftEye - rightEye
+    drawLine(1, 3);   // leftEye - leftEar
+    drawLine(3, 0);   // leftEar - nose
+    drawLine(0, 4);   // nose - rightEar
+    drawLine(4, 2);   // rightEar - rightEye
 
     // Body connections
-    drawLine(PoseLandmarkType.leftShoulder, PoseLandmarkType.rightShoulder);
-    drawLine(PoseLandmarkType.leftShoulder, PoseLandmarkType.leftHip);
-    drawLine(PoseLandmarkType.rightShoulder, PoseLandmarkType.rightHip);
-    drawLine(PoseLandmarkType.leftHip, PoseLandmarkType.rightHip);
+    drawLine(5, 6);   // leftShoulder - rightShoulder
+    drawLine(5, 11);  // leftShoulder - leftHip
+    drawLine(6, 12);  // rightShoulder - rightHip
+    drawLine(11, 12); // leftHip - rightHip
 
     // Left arm
-    drawLine(PoseLandmarkType.leftShoulder, PoseLandmarkType.leftElbow);
-    drawLine(PoseLandmarkType.leftElbow, PoseLandmarkType.leftWrist);
+    drawLine(5, 7);   // leftShoulder - leftElbow
+    drawLine(7, 9);   // leftElbow - leftWrist
 
     // Right arm
-    drawLine(PoseLandmarkType.rightShoulder, PoseLandmarkType.rightElbow);
-    drawLine(PoseLandmarkType.rightElbow, PoseLandmarkType.rightWrist);
+    drawLine(6, 8);   // rightShoulder - rightElbow
+    drawLine(8, 10);  // rightElbow - rightWrist
 
     // Left leg
-    drawLine(PoseLandmarkType.leftHip, PoseLandmarkType.leftKnee);
-    drawLine(PoseLandmarkType.leftKnee, PoseLandmarkType.leftAnkle);
+    drawLine(11, 13); // leftHip - leftKnee
+    drawLine(13, 15); // leftKnee - leftAnkle
 
     // Right leg
-    drawLine(PoseLandmarkType.rightHip, PoseLandmarkType.rightKnee);
-    drawLine(PoseLandmarkType.rightKnee, PoseLandmarkType.rightAnkle);
+    drawLine(12, 14); // rightHip - rightKnee
+    drawLine(14, 16); // rightKnee - rightAnkle
 
-    // Debug: print lines drawn count
     debugPrint('Skeleton: ${landmarks.length} landmarks, $linesDrawn lines drawn');
   }
 
