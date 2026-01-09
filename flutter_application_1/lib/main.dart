@@ -131,21 +131,38 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
     _isDetecting = true;
 
     try {
-      final InputImage inputImage = _convertCameraImage(image);
+      debugPrint(
+        'CameraImage: '
+        'w=${image.width}, h=${image.height}, '
+        'planes=${image.planes.length}'
+      );
+
+      final inputImage = _convertCameraImage(image);
       final poses = await _poseDetector!.processImage(inputImage);
 
+      debugPrint(
+        'PoseDetector result: poses=${poses.length}'
+      );
+      
+      if (poses.isNotEmpty) {
+        debugPrint(
+          'Landmarks count=${poses.first.landmarks.length}'
+        );
+      }
+      
       if (mounted) {
         setState(() {
           _currentPose = poses.isNotEmpty ? poses.first : null;
-        });
-      }
-    } catch (e) {
+          });
+        }
+      } catch (e, st) {
       debugPrint('Error processing image: $e');
-    }
+      debugPrint('$st');
+      }
 
     _isDetecting = false;
   }
-
+  
   InputImage _convertCameraImage(CameraImage image) {
     final bytes = Uint8List.fromList(
       image.planes.fold<List<int>>(
