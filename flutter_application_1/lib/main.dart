@@ -51,7 +51,12 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
   void initState() {
     super.initState();
     _initializeCamera();
-    _poseDetector = PoseDetector(options: PoseDetectorOptions());
+    _poseDetector = PoseDetector(
+      options: PoseDetectorOptions(
+        mode: PoseDetectionMode.single,
+        model: PoseDetectionModel.base,
+      ),
+    );
   }
 
   Future<void> _initializeCamera() async {
@@ -82,6 +87,19 @@ class _PoseTrackerScreenState extends State<PoseTrackerScreen> {
     await _cameraController!.initialize();
     debugPrint('Using camera: ${_currentCamera?.name ?? _currentCamera?.lensDirection}');
     _cameraController!.startImageStream(_processCameraImage);
+    bool _logged = false; // クラス変数として追加
+    
+    void _processCameraImage(CameraImage image) async {
+      if (!_logged) {
+        debugPrint('planes: ${image.planes.length}');
+        debugPrint('format: ${image.format.group}');
+        debugPrint('bytesPerRow: ${image.planes[0].bytesPerRow}');
+        debugPrint('bytesPerPixel: ${image.planes[0].bytesPerPixel}');
+        debugPrint('size: ${image.width} x ${image.height}');
+        debugPrint('sensorOrientation: ${_cameraController.description.sensorOrientation}');
+        _logged = true;
+      }
+    }
 
     // カメラのセンサー向きから回転を設定
     try {
