@@ -282,6 +282,8 @@ class PoseOverlayPainter extends CustomPainter {
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
+    int linesDrawn = 0;
+
     void drawLine(PoseLandmarkType a, PoseLandmarkType b) {
       final la = landmarks[a];
       final lb = landmarks[b];
@@ -291,6 +293,7 @@ class PoseOverlayPainter extends CustomPainter {
           Offset(lb.x * size.width, lb.y * size.height),
           linePaint,
         );
+        linesDrawn++;
       }
     }
 
@@ -316,6 +319,19 @@ class PoseOverlayPainter extends CustomPainter {
 
     // Right arm
     drawLine(PoseLandmarkType.rightShoulder, PoseLandmarkType.rightElbow);
+    drawLine(PoseLandmarkType.rightElbow, PoseLandmarkType.rightWrist);
+
+    // Left leg
+    drawLine(PoseLandmarkType.leftHip, PoseLandmarkType.leftKnee);
+    drawLine(PoseLandmarkType.leftKnee, PoseLandmarkType.leftAnkle);
+
+    // Right leg
+    drawLine(PoseLandmarkType.rightHip, PoseLandmarkType.rightKnee);
+    drawLine(PoseLandmarkType.rightKnee, PoseLandmarkType.rightAnkle);
+
+    // Debug: print lines drawn count
+    debugPrint('Skeleton: ${landmarks.length} landmarks, $linesDrawn lines drawn');
+  }
     drawLine(PoseLandmarkType.rightElbow, PoseLandmarkType.rightWrist);
 
     // Left leg
